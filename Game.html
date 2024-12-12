@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Speed Test Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .sentence {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .input-container {
+            margin-bottom: 20px;
+        }
+        input {
+            padding: 10px;
+            font-size: 18px;
+            width: 80%;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .score {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        #restart-btn {
+            background-color: #007bff;
+            margin-top: 20px;
+        }
+        #restart-btn:hover {
+            background-color: #0056b3;
+        }
+        #level-display {
+            font-size: 18px;
+            margin-top: 10px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Typing Speed Test Game</h1>
+        <p class="sentence" id="sentence-display">Click "Start" to begin typing!</p>
+        <div class="input-container">
+            <input type="text" id="typed-input" placeholder="Start typing here..." disabled>
+        </div>
+        <button id="start-btn">Start</button>
+        <button id="finished-btn" style="display: none;">Finished</button>
+        <button id="start-level-btn" style="display: none;">Start Level</button>
+        <button id="restart-btn" style="display: none;">Restart</button>
+        <div class="score" id="score-display"></div>
+        <div id="level-display"></div>
+    </div>
+
+    <script>
+        const sentences = [
+            "The quick brown fox jumps over the lazy dog.",
+            "Coding is fun and challenging at the same time.",
+            "Learning new things is always exciting and rewarding.",
+            "The best way to predict the future is to create it.",
+            "Success is the sum of small efforts, repeated day in and day out."
+        ];
+
+        let startTime;
+        let endTime;
+        let sentence;
+        let level = 1;
+        let round = 1;
+        let totalScore = 0;
+
+        const sentenceDisplay = document.getElementById("sentence-display");
+        const typedInput = document.getElementById("typed-input");
+        const startBtn = document.getElementById("start-btn");
+        const finishedBtn = document.getElementById("finished-btn");
+
+        const startLevelBtn = document.getElementById("start-level-btn");
+
+        const restartBtn = document.getElementById("restart-btn");
+        const scoreDisplay = document.getElementById("score-display");
+        const levelDisplay = document.getElementById("level-display");
+
+        function getRandomSentence() {
+            const randomIndex = Math.floor(Math.random() * sentences.length);
+            return sentences[randomIndex];
+        }
+
+        startBtn.addEventListener('click', function() {
+            sentence = getRandomSentence();
+            sentenceDisplay.textContent = sentence;
+            typedInput.disabled = false;
+            typedInput.value = '';
+            typedInput.focus();
+            startTime = new Date().getTime();
+            scoreDisplay.textContent = '';
+            levelDisplay.textContent = `Level: ${level}`;
+            startBtn.style.display = 'none';
+            finishedBtn.style.display = 'block';
+            restartBtn.style.display = 'none';
+        });
+
+        finishedBtn.addEventListener('click', function() {
+            const typedText = typedInput.value;
+
+            endTime = new Date().getTime();
+            const timeTaken = (endTime - startTime) / 1000;
+            const wordsPerMinute = Math.round((sentence.split(' ').length / timeTaken) * 60);
+
+            
+                totalScore += wordsPerMinute;
+
+                scoreDisplay.textContent = `Round ${round}: You typed the sentence in ${timeTaken.toFixed(2)} seconds. Your typing speed: ${wordsPerMinute} WPM.`;
+                round++;
+
+                if (round <= 3) {
+                    level++;
+                    levelDisplay.textContent = `Level: ${level}`;
+                    sentence = getRandomSentence();
+                    sentenceDisplay.textContent = sentence;
+                    typedInput.value = '';
+                    typedInput.disabled = true;
+                    finishedBtn.style.display = 'none';
+                    
+                    
+                        startLevelBtn.style.display = 'block';
+                
+
+                 
+                    
+                } else {
+                    scoreDisplay.textContent = `Game Over! Total Score: ${totalScore} WPM`;
+                    finishedBtn.style.display = 'none';
+                    startLevelBtn.style.display = 'none';
+                    restartBtn.style.display = 'block';
+                }
+                
+            
+        });
+               
+        
+            
+        
+        startLevelBtn.addEventListener('click', function() {
+            sentence = getRandomSentence();
+            sentenceDisplay.textContent = sentence; 
+            typedInput.value = ''; 
+            typedInput.disabled = false;
+            typedInput.focus(); 
+            startLevelBtn.style.display = 'none';
+            finishedBtn.style.display = 'block'; 
+        });
+        restartBtn.addEventListener('click', function() {
+            level = 1;
+            round = 1;
+            totalScore = 0;
+            levelDisplay.textContent = `Level: ${level}`;
+            sentence = getRandomSentence();
+            sentenceDisplay.textContent = sentence;
+            typedInput.disabled = false;
+            typedInput.value = '';
+            typedInput.focus();
+            scoreDisplay.textContent = '';
+            finishedBtn.style.display = 'block';
+            restartBtn.style.display = 'none';
+            startBtn.style.display = 'none';
+        });
+    </script>
+
+</body>
+</html>
